@@ -5,18 +5,20 @@ from selene import be, have
 
 @pytest.fixture(scope="module")
 def maximize_browser_window():
-    browser.driver.maximize_window()
-    # browser.config.window_width = 1920
-    # browser.config.window_height = 1080
+    browser.config.window_width = 1920
+    browser.config.window_height = 1080
 
-def test_google_search_positive(maximize_browser_window):
+
+def test_google_search(maximize_browser_window):
     browser.open('https://google.com')
     browser.element('[name="q"]').should(be.blank).type('yashaka/selene').press_enter()
     browser.element('[id="search"]').should(have.text('Selene - User-oriented Web UI browser tests in Python'))
-    print('При корректном запросе результаты поиска содержат текст "Selene - User-oriented Web UI browser tests in Python"')
+    print('Результаты поиска по строке содержат ожидаемый заголовок')
 
-def test_google_search_negative(maximize_browser_window):
+
+def test_no_search_results(maximize_browser_window):
     browser.open('https://google.com')
-    browser.element('[name="q"]').should(be.blank).type('blablabla').press_enter()
-    browser.element('[id="search"]').should(have.no.text('Selene - User-oriented Web UI browser tests in Python'))
-    print('При некорректном запросе в результатах поиска отсутствует текст "Selene - User-oriented Web UI browser tests in Python"')
+    random_string = 'E81RvIDd2KZrdsYQrwDRLsgbzVUOQy8naI9arDgwiijXiy1iX6'
+    browser.element('[name="q"]').should(be.blank).type(random_string).press_enter()
+    browser.element('[id="topstuff"]').should(have.text(f'По запросу {random_string} ничего не найдено.'))
+    print('При поиске по произвольной строке ничего не находится')
